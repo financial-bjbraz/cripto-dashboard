@@ -1,0 +1,95 @@
+<div class="element-wrapper">
+        <div class="element-actions actions-only">
+            <a class="element-action element-action-fold" href="#"><i
+                class="os-icon os-icon-minus-circle"></i></a>
+        </div>
+        <h6 class="element-header">Quick Conversion {{teste}}</h6>
+        <div class="element-box-tp">
+            <form action="">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="">From </label>
+                            <select class="form-control"  [(ngModel)]="trade.baseSymbol" name="baseSymbol">
+                                <option value="bitcoin">Bitcoins</option>
+                                <option value="litecoin">Litecoins</option>
+                                <option value="ripple">Ripple</option>
+                                <option value="dogecoin">Dogecoin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="" >To</label>
+                                <select class="form-control" [(ngModel)]="trade.counterSymbol" name="counterSymbol">
+                                    <option>USD</option>
+                                    <option>Litecoins</option>
+                                    <option>Ripple</option>
+                                    <option>Dogecoin</option>
+                                </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="">Amount</label>
+                            <div class="input-group">
+                                <input 
+                                    class="form-control" placeholder="Amount..."
+                                    type="number" value="1.37" name="amount" 
+                                    [(ngModel)]="trade.baseAmount"
+                                    >
+                                <div class="input-group-append">
+                                    <div class="input-group-text">BTC</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="">Price per BTC</label>
+                            <div class="input-group">
+                                <input class="form-control" type="number" value="8,284"
+                                [(ngModel)]="trade.counterAmount" name="counterAmount" 
+                                >
+                                <div class="input-group-append">
+                                    <div class="input-group-text">USD</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button 
+                class="btn btn-primary btn-block btn-lg" 
+                (click)="save()" 
+                data-target=".bd-example-modal-sm" data-toggle="modal">
+                    <i class="os-icon os-icon-refresh-ccw"></i><span>Transfer
+                        Now</span>
+                </button>
+                <br/>
+                <div *ngIf="error" class="alert alert-danger" role="alert"><strong>Oh snap! </strong>Change a few things up and try submitting again.</div>
+                
+                <div *ngIf="saved" aria-labelledby="mySmallModalLabel" class="modal fade bd-example-modal-sm" role="dialog" tabindex="-1" style="display: none;" aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Transfer Status</h5>
+                                    <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true"> ×</span></button>
+                            </div>
+                        <div class="modal-body">
+                                <label for="">Transfer Sucessfully...</label>
+                        </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" data-dismiss="modal" type="button"> Close</button>
+                                <button class="btn btn-primary" type="button"> Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </form>
+        </div>
+</div>
