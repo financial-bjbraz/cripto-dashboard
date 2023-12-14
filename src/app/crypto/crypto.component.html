@@ -403,65 +403,18 @@ END - Top Bar
 												Wallet</span></a>
 									</div>
 								</div>
-								<div class="element-wrapper compact">
-									<div class="element-box-tp">
-										<div class="element-actions d-none d-sm-block">
-											<form class="form-inline justify-content-sm-end">
-												<label class="smaller" for="">Show Period:</label><select
-													class="form-control form-control-sm form-control-faded"><option
-														selected="true">Last 30 days</option>
-													<option>This Week</option>
-													<option>This Month</option>
-													<option>Today</option></select>
-											</form>
-										</div>
-										<h6 class="element-box-header">Balance History</h6>
-										<div class="el-chart-w">
-											<div class="chartjs-size-monitor"
-												style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
-												<div class="chartjs-size-monitor-expand"
-													style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
-													<div
-														style="position: absolute; width: 1000000px; height: 1000000px; left: 0; top: 0"></div>
-												</div>
-												<div class="chartjs-size-monitor-shrink"
-													style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
-													<div
-														style="position: absolute; width: 200%; height: 200%; left: 0; top: 0"></div>
-												</div>
-											</div>
-											<canvas
-												data-chart-data="13,28,19,24,43,49,40,35,42,46,38,32,45"
-												height="100" id="liteLineChartV3" width="601"
-												class="chartjs-render-monitor"
-												style="display: block; width: 601px; height: 100px;"></canvas>
-										</div>
-									</div>
-								</div>
 							</div>
-              				<!-- <div class="col-sm-2 d-none d-xxl-block">
-								<div class="cta-w cta-with-media purple">
-									<div class="cta-content">
-										<div class="highlight-header">Audit.exchange</div>
-										<h3 class="cta-header">Download our app on Google Play
-											Store</h3>
-										<a class="store-google-btn" href="#"><img alt=""
-											src="assets/img/market-google-play.png"></a>
-									</div>
-									<div class="cta-media">
-										<img alt="" src="assets/img/phone1.png">
-									</div>
-								</div>
-							</div> -->
-							<div class="col-sm-4 d-none d-lg-block">
+							<div class="col-sm-2 d-none d-lg-block">
 								<div class="element-box less-padding">
 									<h6 class="element-box-header text-center">Total</h6>
-									<div class="el-chart-w">
-										<canvas height="0" id="donutChart1" width="0"
-											class="chartjs-render-monitor"
-											style="display: block; width: 0px; height: 0px;"></canvas>
-										<div class="inside-donut-chart-label">
-											<strong>{{calledApis.total}}</strong><span>Urls Testadas</span>
+									<div style="width:100px;height: 100px;">
+										<div class="el-chart-w">
+											<canvas height="50" id="donutChart" width="50"
+												class="chartjs-render-monitor"
+												style="display: block; width: 0px; height: 0px;"></canvas>
+											<div class="inside-donut-chart-label">
+												<strong>100</strong><span>Urls Testadas</span>
+											</div>
 										</div>
 									</div>
 									<div class="el-legend condensed">
@@ -471,16 +424,16 @@ END - Top Bar
 													<div class="legend-pin legend-pin-squared"
 														style="background-color: #6896f9;"></div>
 													<div class="legend-value">
-														<span>{{calledApis.details[0].code}}</span>
-														<div class="legend-sub-value">{{calledApis.details[0].percentilFormatted}}%, {{calledApis.details[0].total}} Chamadas</div>
+														<span>10</span>
+														<div class="legend-sub-value">5%, 100 Chamadas</div>
 													</div>
 												</div>
 												<div class="legend-value-w">
 													<div class="legend-pin legend-pin-squared"
 														style="background-color: #85c751;"></div>
 													<div class="legend-value">
-														<span>{{calledApis.details[1].code}}</span>
-														<div class="legend-sub-value">{{calledApis.details[1].percentilFormatted}}%, {{calledApis.details[1].total}} Chamadas</div>
+														<span>12</span>
+														<div class="legend-sub-value">30%, 100 Chamadas</div>
 													</div>
 												</div>
 											</div>
@@ -489,16 +442,16 @@ END - Top Bar
 													<div class="legend-pin legend-pin-squared"
 														style="background-color: #806ef9;"></div>
 													<div class="legend-value">
-														<span>{{calledApis.details[2].code}}</span>
-														<div class="legend-sub-value">{{calledApis.details[2].percentilFormatted}}%, {{calledApis.details[2].total}} Chamadas</div>
+														<span>13</span>
+														<div class="legend-sub-value">65%, 100 Chamadas</div>
 													</div>
 												</div>
 												<div class="legend-value-w">
 													<div class="legend-pin legend-pin-squared"
 														style="background-color: #d97b70;"></div>
 													<div class="legend-value">
-														<span>{{calledApis.details[3].code}}</span>
-														<div class="legend-sub-value">{{calledApis.details[3].percentilFormatted}}%, {{calledApis.details[3].total}} Chamadas</div>
+														<span>14</span>
+														<div class="legend-sub-value">0%, 100 Chamadas</div>
 													</div>
 												</div>
 											</div>
@@ -556,6 +509,16 @@ END - Top Bar
 									<div class="trending trending-down">
 										<span>12%</span><i class="os-icon os-icon-arrow-down6"></i>
 									</div></a>
+							</div>
+						</div>
+						<div class="content-i">
+							<div class="content-box">
+								<!-- <balance>Carregando...</balance> -->
+								<!-- <trade>Loading...</trade>
+								<devices>Carregando...</devices>
+								<orders>Carregando...</orders> -->
+								<visitors>Carregando...</visitors>
+								<!-- <recentorders>Carregando</recentorders> -->
 							</div>
 						</div>
 						<div class="row">
@@ -766,13 +729,8 @@ END - Top Bar
 							<i class="os-icon os-icon-close"></i>
 						</div>
 
-
-						<trade>Loading...</trade>
-
-
-
-
 						<div class="element-wrapper compact">
+
 							<div class="element-actions actions-only">
 								<a class="element-action element-action-fold" href="#"><i
 									class="os-icon os-icon-minus-circle"></i></a>

@@ -20,14 +20,14 @@ import { TeammembersComponent } from './teammembers/teammembers.component';
 import { MenuComponent } from './menu/menu.component';
 import { TopbarComponent } from './topbar/topbar.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-
+import { BalanceComponent } from './balance/balance.component';
 import { CryptoComponent } from './crypto/crypto.component';
 import { TradeComponent } from './trade/trade.component';
 import { TradeService } from './trade/trade.service';
 
 const appRoutes: Routes = [
   { path: '',
-    redirectTo: '/exchange',
+    redirectTo: '/dashboard',
     pathMatch: 'full'
   },
   {
@@ -35,7 +35,7 @@ const appRoutes: Routes = [
     component: DashboardComponent
   },
   {
-    path: 'exchange',
+    path: 'crypto',
     component: CryptoComponent
   }
 ];
@@ -54,7 +54,8 @@ const appRoutes: Routes = [
     TopbarComponent,
     DashboardComponent,
     CryptoComponent,
-    TradeComponent
+    TradeComponent,
+    BalanceComponent,
   ],
   imports: [
     BrowserModule,
