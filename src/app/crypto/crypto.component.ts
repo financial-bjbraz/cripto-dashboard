@@ -9,7 +9,6 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { HttpDetail } from './httpdetail.model';
 import { ApiImplementada } from './apiimplementada.model';
 
-
 @Component({
   selector: 'app-crypto',
   templateUrl: './crypto.component.html',
@@ -32,25 +31,34 @@ export class CryptoComponent implements OnInit {
 
   ngOnInit() {
     console.log('Initializing CryptoServices...');
-    this.service.checkCredentials();
+    //this.service.checkCredentials();
 
     this.user = new User();
     this.user.name = "Alex";
 
-    this.service.getTotals().subscribe(data => this.totals = {
-        id: (data as any)[0].id,
-        dhExtraction: new Date((data as any)[0].dhExtraction[0], (data as any)[0].dhExtraction[1] -1, (data as any)[0].dhExtraction[2] ),
-        totalAuthorisationServers: (data as any)[0].totalAuthorisationServers,
-        totalParticipantsActive: (data as any)[0].totalParticipantsActive,
-        totalParticipantsRegistered: (data as any)[0].totalParticipantsRegistered,
-        totalParticipantsInactive: (data as any)[0].totalParticipantsRegistered - (data as any)[0].totalParticipantsActive
-     });
+    this.totals = {
+          id: '1',
+          dhExtraction: new Date('2023-01-01'),
+          totalAuthorisationServers: 1,
+          totalParticipantsActive: 2,
+          totalParticipantsRegistered: 3,
+          totalParticipantsInactive: 4,
+       }
 
-     this.service.getParticipants().subscribe( (data: Array<Participants>) => this.participants = data);
+    // this.service.getTotals().subscribe(data => this.totals = {
+    //     id: (data as any)[0].id,
+    //     dhExtraction: new Date((data as any)[0].dhExtraction[0], (data as any)[0].dhExtraction[1] -1, (data as any)[0].dhExtraction[2] ),
+    //     totalAuthorisationServers: (data as any)[0].totalAuthorisationServers,
+    //     totalParticipantsActive: (data as any)[0].totalParticipantsActive,
+    //     totalParticipantsRegistered: (data as any)[0].totalParticipantsRegistered,
+    //     totalParticipantsInactive: (data as any)[0].totalParticipantsRegistered - (data as any)[0].totalParticipantsActive
+    //  });
 
-     this.service.getApisImplementadas().subscribe( (data: Array<ApiImplementada>) => this.apisImplementadas = data );
+     // this.service.getParticipants().subscribe( (data: Array<Participants>) => this.participants = data);
 
-     this.calcularTotalApisChamadas();
+     // this.service.getApisImplementadas().subscribe( (data: Array<ApiImplementada>) => this.apisImplementadas = data );
+
+     //this.calcularTotalApisChamadas();
 
 
     // this.service.getUserDetails().subscribe(data => {

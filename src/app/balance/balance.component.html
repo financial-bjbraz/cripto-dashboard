@@ -1,0 +1,35 @@
+<div class="element-wrapper compact">
+    <div class="element-box-tp">
+        <div class="element-actions d-none d-sm-block">
+            <form class="form-inline justify-content-sm-end">
+                <label class="smaller" for="">Show Period:</label><select
+                    class="form-control form-control-sm form-control-faded"><option
+                        selected="true">Last 30 days</option>
+                    <option>This Week</option>
+                    <option>This Month</option>
+                    <option>Today</option></select>
+            </form>
+        </div>
+        <h6 class="element-box-header">Balance History</h6>
+        <div class="el-chart-w">
+            <div class="chartjs-size-monitor"
+                style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                <div class="chartjs-size-monitor-expand"
+                    style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                    <div
+                        style="position: absolute; width: 1000000px; height: 1000000px; left: 0; top: 0"></div>
+                </div>
+                <div class="chartjs-size-monitor-shrink"
+                    style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                    <div
+                        style="position: absolute; width: 200%; height: 200%; left: 0; top: 0"></div>
+                </div>
+            </div>
+            <canvas
+                data-chart-data="13,28,19,24,43,49,40,35,42,46,38,32,45"
+                height="100" id="liteLineChartV3" width="601"
+                class="chartjs-render-monitor"
+                style="display: block; width: 601px; height: 100px;"></canvas>
+        </div>
+    </div>
+</div>
