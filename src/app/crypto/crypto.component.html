@@ -273,7 +273,7 @@ START - User avatar and menu in secondary top menu
 										</div>
 										<div class="logged-user-info-w">
 											<div class="logged-user-name">
-												{{user.name}}
+												Cripto Dashboard
 											</div>
 											<div class="logged-user-role">Administrator</div>
 										</div>
@@ -319,25 +319,25 @@ END - Top Bar
 									<li class="nav-item"><a aria-expanded="false"
 										class="nav-link active" data-toggle="tab" href="#tab_overview"><span
 											class="tab-label">Total Instituições</span>
-                      <span class="tab-value">{{totals.totalParticipantsRegistered}}</span>
+                      <span class="tab-value">{{ topListings.length }}</span>
                       <span
 											class="badge badge-success"><i
 												class="os-icon os-icon-arrow-up6"></i><span>22%</span></span></a></li>
 									<li class="nav-item"><a aria-expanded="false"
 										class="nav-link" data-toggle="tab" href="#tab_sales"><span
-											class="tab-label">Ativas</span><span class="tab-value">{{totals.totalParticipantsActive}}</span><span
+											class="tab-label">Ativas</span><span class="tab-value">{{ topListings.length }}</span><span
 											class="badge badge-success"><i
 												class="os-icon os-icon-arrow-up6"></i><span>25%</span></span></a></li>
 									<li class="nav-item d-xl-block"><a
 										aria-expanded="false" class="nav-link" data-toggle="tab"
 										href="#tab_sales"><span class="tab-label">Auth Servers</span><span
-											class="tab-value">{{totals.totalAuthorisationServers}}</span><span
+											class="tab-value">{{ topListings.length }}</span><span
 											class="badge badge-danger"><i
 												class="os-icon os-icon-arrow-down6"></i><span>5%</span></span></a></li>
 									<li class="nav-item d-l-block"><a
 										aria-expanded="true" class="nav-link" data-toggle="tab"
 										href="#tab_sales"><span class="tab-label">Inativas</span><span
-											class="tab-value">{{totals.totalParticipantsInactive}}</span><span
+											class="tab-value">{{ topListings.length }}</span><span
 											class="badge badge-success"><i
 												class="os-icon os-icon-arrow-up6"></i><span>12%</span></span></a></li>
 									<!-- <li class="nav-item nav-actions d-sm-block"><a
@@ -352,55 +352,102 @@ END - Top Bar
 								<div
 									class="element-balances justify-content-between mobile-full-width">
 									<div class="balance balance-v2">
-										<div class="balance-title">{{nome}} Portfolio Balance </div>
+										<div class="balance-title">My Portfolio Balance
+											<small *ngIf="walletConnected && getNetworkName()"
+												class="text-muted ml-1" style="font-size:0.65em;">
+												({{ getNetworkName() }})
+											</small>
+										</div>
 										<div class="balance-value">
-											<span class="d-xxl-none">$72,245</span><span
-												class="d-none d-xxl-inline-block">${{balance}}</span><span
-												class="trending trending-down-basic"><span>%12</span><i
-												class="os-icon os-icon-arrow-2-down"></i></span>
+											<span *ngIf="!walletConnected">—</span>
+											<span *ngIf="walletConnected && !walletLoading">
+												{{ formatUSD(portfolioBalanceUSD) }}
+											</span>
+											<span *ngIf="walletLoading" class="text-muted" style="font-size:0.6em;">
+												Loading...
+											</span>
 										</div>
 									</div>
 									<div class="balance-table pl-sm-2">
-										<table
-											class="table table-lightborder table-bordered table-v-compact mb-0">
+										<table class="table table-lightborder table-bordered table-v-compact mb-0">
 											<tbody>
-												<tr>
-													<td><strong>2.34</strong>
-													<div class="balance-label smaller lighter text-nowrap">Bitcoins
-															BTC</div></td>
-													<td><strong>1.74</strong>
-													<div class="balance-label smaller lighter text-nowrap">Ripple
-															RPX</div></td>
-													<td
-														class="d-sm-none d-xxxxl-table-cell d-md-table-cell d-xxl-none"><strong>4.82</strong>
-													<div class="balance-label smaller lighter text-nowrap">Newcoin
-															NCN</div></td>
-												</tr>
-												<tr>
-													<td><strong>1.22</strong>
-													<div class="balance-label smaller lighter text-nowrap">Litecoin
-															LTC</div></td>
-													<td><strong>1.87</strong>
-													<div class="balance-label smaller lighter text-nowrap">Ethereum
-															ETH</div></td>
-													<td
-														class="d-sm-none d-xxxxl-table-cell d-md-table-cell d-xxl-none"><strong>1.02</strong>
-													<div class="balance-label smaller lighter text-nowrap">Dogecoin
-															DGC</div></td>
-												</tr>
+												<!-- Connected: show real wallet tokens -->
+												<ng-container *ngIf="walletConnected && walletTokens.length > 0">
+													<tr *ngFor="let row of [0, 1]">
+														<ng-container *ngFor="let col of [0, 1, 2]">
+															<ng-container *ngIf="walletTokens[row * 3 + col] as token">
+																<td [class.d-sm-none]="col === 2" [class.d-md-table-cell]="col === 2">
+																	<strong>{{ token.balance | number:'1.0-4' }}</strong>
+																	<div class="balance-label smaller lighter text-nowrap">
+																		{{ token.name }} {{ token.symbol }}
+																		<span *ngIf="getTokenUSDValue(token) > 0" class="text-success" style="display:block;font-size:0.85em">
+																			≈ {{ formatUSD(getTokenUSDValue(token)) }}
+																		</span>
+																	</div>
+																</td>
+															</ng-container>
+															<td *ngIf="!walletTokens[row * 3 + col]" [class.d-sm-none]="col === 2" [class.d-md-table-cell]="col === 2">
+																<span class="text-muted">—</span>
+															</td>
+														</ng-container>
+													</tr>
+												</ng-container>
+												<!-- Not connected or loading -->
+												<ng-container *ngIf="!walletConnected || walletTokens.length === 0">
+													<tr>
+														<td colspan="3" class="text-center py-2">
+															<span *ngIf="walletLoading" class="text-muted">
+																<i class="os-icon os-icon-refresh-ccw"></i> Loading tokens...
+															</span>
+															<span *ngIf="!walletConnected && !walletLoading" class="text-muted" style="font-size:0.85em;">
+																Connect your wallet to see token balances
+															</span>
+															<span *ngIf="walletConnected && !walletLoading && walletTokens.length === 0" class="text-muted" style="font-size:0.85em;">
+																No tokens found on this address
+															</span>
+														</td>
+													</tr>
+												</ng-container>
 											</tbody>
 										</table>
 									</div>
 								</div>
 								<div class="element-wrapper pb-4 mb-4 border-bottom">
 									<div class="element-box-tp">
+
 										<a class="btn btn-primary" href="#"><i
 											class="os-icon os-icon-refresh-ccw"></i><span>Deposit
-												Money</span></a><a class="btn btn-grey" href="#"><i
-											class="os-icon os-icon-log-out"></i><span>Withdraw</span></a><a
-											class="btn btn-grey d-none d-sm-inline-block" href="#"><i
+												Money</span></a>
+										<a class="btn btn-grey ml-1" href="#"><i
+											class="os-icon os-icon-log-out"></i><span>Withdraw</span></a>
+										<a class="btn btn-grey ml-1 d-none d-sm-inline-block" href="#"><i
 											class="os-icon os-icon-plus-circle"></i><span>Add
 												Wallet</span></a>
+
+										<!-- ── Reown / WalletConnect button ───────────────────── -->
+										<!-- Connect Wallet button (not connected) -->
+										<button *ngIf="!walletConnected"
+											class="btn btn-primary ml-1"
+											[disabled]="isConnecting"
+											(click)="toggleWalletDropdown($event)">
+											<i class="os-icon os-icon-link-2"></i>
+											<span>{{ isConnecting ? 'Connecting...' : 'Connect Wallet' }}</span>
+										</button>
+
+										<!-- Connected pill (connected state) -->
+										<button *ngIf="walletConnected"
+											class="wm-connected-pill ml-1"
+											(click)="toggleWalletDropdown($event)">
+											<span class="wm-connected-dot"></span>
+											{{ getShortAddress() }}
+											<span *ngIf="getNetworkName()" class="wm-network-label">· {{ getNetworkName() }}</span>
+										</button>
+
+										<!-- Error message -->
+										<div *ngIf="walletError" class="wm-error mt-2">
+											<i class="os-icon os-icon-warning-circle"></i> {{ walletError }}
+										</div>
+
 									</div>
 								</div>
 							</div>
@@ -461,64 +508,158 @@ END - Top Bar
 							</div>
 
 						</div>
+						<!-- CoinMarketCap Live Prices -->
 						<div class="row pt-2">
-							<div class="col-6 col-sm-3 col-xxl-2">
-								<a class="element-box el-tablo centered trend-in-corner smaller"
-									href="#"><div class="label">Bitcoin Price</div>
-									<div class="value">$7.484</div>
-									<div class="trending trending-up">
-										<span>12%</span><i class="os-icon os-icon-arrow-up6"></i>
-									</div></a>
+							<div class="col-12">
+								<div class="element-wrapper pb-0">
+									<h6 class="element-header">Live Crypto Prices
+										<small *ngIf="isLoadingListings" class="text-muted ml-2">Loading...</small>
+										<span *ngIf="listingsError" class="badge badge-danger ml-2">{{ listingsError }}</span>
+									</h6>
+								</div>
 							</div>
-							<div class="col-6 col-sm-3 col-xxl-2">
-								<a class="element-box el-tablo centered trend-in-corner smaller"
-									href="#"><div class="label">Last Month</div>
-									<div class="value text-danger">-$3,248</div>
-									<div class="trending trending-down">
-										<span>12%</span><i class="os-icon os-icon-arrow-down6"></i>
-									</div></a>
-							</div>
-							<div class="col-6 col-sm-3 col-xxl-2">
-								<a class="element-box el-tablo centered trend-in-corner smaller"
-									href="#"><div class="label">Ethereum Price</div>
-									<div class="value">$784.12</div>
-									<div class="trending trending-up">
-										<span>12%</span><i class="os-icon os-icon-arrow-up6"></i>
-									</div></a>
-							</div>
-							<div class="col-6 col-sm-3 col-xxl-2">
-								<a class="element-box el-tablo centered trend-in-corner smaller"
-									href="#"><div class="label">Ripple Price</div>
-									<div class="value">$1,284</div>
-									<div class="trending trending-up">
-										<span>12%</span><i class="os-icon os-icon-arrow-up6"></i>
-									</div></a>
-							</div>
-							<div class="col-6 col-xxl-2 d-sm-none d-xxl-block">
-								<a class="element-box el-tablo centered trend-in-corner smaller"
-									href="#"><div class="label">Litecoin Price</div>
-									<div class="value">-$3,473</div>
-									<div class="trending trending-down">
-										<span>5%</span><i class="os-icon os-icon-arrow-down6"></i>
-									</div></a>
-							</div>
-							<div class="col-6 col-xxl-2 d-sm-none d-xxl-block">
-								<a class="element-box el-tablo centered trend-in-corner smaller"
-									href="#"><div class="label">Last Month</div>
-									<div class="value">-$3,248</div>
-									<div class="trending trending-down">
-										<span>12%</span><i class="os-icon os-icon-arrow-down6"></i>
-									</div></a>
-							</div>
+
+							<!-- Dynamic tiles from CoinMarketCap -->
+							<ng-container *ngFor="let coin of topListings.slice(0, 6)">
+								<div class="col-6 col-sm-3 col-xxl-2">
+									<a class="element-box el-tablo centered trend-in-corner smaller" href="#">
+										<div class="label">{{ coin.symbol }}</div>
+										<div class="value" style="font-size:0.95em">
+											{{ formatPrice(coin.quote.USD.price) }}
+										</div>
+										<div class="trending"
+											[ngClass]="isPriceUp(coin.quote.USD.percent_change_24h) ? 'trending-up' : 'trending-down'">
+											<span>{{ coin.quote.USD.percent_change_24h | number:'1.2-2' }}%</span>
+											<i class="os-icon"
+												[ngClass]="isPriceUp(coin.quote.USD.percent_change_24h) ? 'os-icon-arrow-up6' : 'os-icon-arrow-down6'"></i>
+										</div>
+									</a>
+								</div>
+							</ng-container>
+
+							<!-- Placeholder tiles while loading -->
+							<ng-container *ngIf="isLoadingListings">
+								<div class="col-6 col-sm-3 col-xxl-2" *ngFor="let i of [1,2,3,4,5,6]">
+									<div class="element-box el-tablo centered smaller">
+										<div class="label" style="background:#eee;height:12px;width:40px;margin:0 auto;border-radius:3px"></div>
+										<div class="value" style="background:#eee;height:20px;width:70px;margin:8px auto;border-radius:3px"></div>
+									</div>
+								</div>
+							</ng-container>
 						</div>
+						<!-- CoinMarketCap Crypto Search -->
 						<div class="content-i">
 							<div class="content-box">
-								<!-- <balance>Carregando...</balance> -->
-								<!-- <trade>Loading...</trade>
-								<devices>Carregando...</devices>
-								<orders>Carregando...</orders> -->
-								<visitors>Carregando...</visitors>
-								<!-- <recentorders>Carregando</recentorders> -->
+								<div class="element-wrapper">
+									<h6 class="element-header">Search Crypto Prices</h6>
+									<div class="element-box">
+										<!-- Search Input -->
+										<div class="form-group">
+											<div class="input-group">
+												<input
+													class="form-control"
+													type="text"
+													placeholder="Enter symbol: BTC, ETH, SOL..."
+													[value]="searchQuery"
+													(input)="onSearch($any($event.target).value)"
+												>
+												<div class="input-group-append">
+													<button class="btn btn-primary" type="button" (click)="clearSearch()">
+														<i class="os-icon os-icon-x"></i> Clear
+													</button>
+												</div>
+											</div>
+										</div>
+
+										<!-- Loading Indicator -->
+										<div *ngIf="isLoadingSearch" class="text-center py-3">
+											<span class="text-muted">Searching...</span>
+										</div>
+
+										<!-- Error Message -->
+										<div *ngIf="searchError" class="alert alert-danger">
+											{{ searchError }}
+											<small class="d-block mt-1">
+												Set your API key in <code>src/environments/environment.ts</code> — coinMarketCapApiKey.
+											</small>
+										</div>
+
+										<!-- Search Results -->
+										<div *ngIf="searchResults.length > 0 && !isLoadingSearch">
+											<table class="table table-lightborder table-bordered">
+												<thead>
+													<tr>
+														<th>#</th>
+														<th>Name</th>
+														<th>Symbol</th>
+														<th>Price (USD)</th>
+														<th>24h Change</th>
+														<th>Market Cap</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr *ngFor="let coin of searchResults">
+														<td>{{ coin.rank }}</td>
+														<td><strong>{{ coin.name }}</strong></td>
+														<td><span class="badge badge-primary">{{ coin.symbol }}</span></td>
+														<td><strong>{{ formatPrice(coin.quote.USD.price) }}</strong></td>
+														<td>
+															<span [ngClass]="isPriceUp(coin.quote.USD.percent_change_24h) ? 'text-success' : 'text-danger'">
+																<i class="os-icon"
+																	[ngClass]="isPriceUp(coin.quote.USD.percent_change_24h) ? 'os-icon-arrow-up6' : 'os-icon-arrow-down6'"></i>
+																{{ coin.quote.USD.percent_change_24h | number:'1.2-2' }}%
+															</span>
+														</td>
+														<td>{{ formatMarketCap(coin.quote.USD.market_cap) }}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+
+										<!-- Top Listings Table (when no search) -->
+										<div *ngIf="searchQuery.trim() === '' && !isLoadingListings && topListings.length > 0">
+											<h6 class="mt-3 mb-2 text-muted" style="font-size:0.85em;text-transform:uppercase;letter-spacing:1px">Top 10 by Market Cap</h6>
+											<table class="table table-lightborder table-bordered">
+												<thead>
+													<tr>
+														<th>Rank</th>
+														<th>Name</th>
+														<th>Symbol</th>
+														<th>Price (USD)</th>
+														<th>24h %</th>
+														<th>7d %</th>
+														<th>Market Cap</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr *ngFor="let coin of topListings">
+														<td>{{ coin.rank }}</td>
+														<td><strong>{{ coin.name }}</strong></td>
+														<td><span class="badge badge-primary">{{ coin.symbol }}</span></td>
+														<td><strong>{{ formatPrice(coin.quote.USD.price) }}</strong></td>
+														<td>
+															<span [ngClass]="isPriceUp(coin.quote.USD.percent_change_24h) ? 'text-success' : 'text-danger'">
+																{{ coin.quote.USD.percent_change_24h | number:'1.2-2' }}%
+															</span>
+														</td>
+														<td>
+															<span [ngClass]="isPriceUp(coin.quote.USD.percent_change_7d) ? 'text-success' : 'text-danger'">
+																{{ coin.quote.USD.percent_change_7d | number:'1.2-2' }}%
+															</span>
+														</td>
+														<td>{{ formatMarketCap(coin.quote.USD.market_cap) }}</td>
+													</tr>
+												</tbody>
+											</table>
+											<div class="text-right">
+												<button class="btn btn-sm btn-grey" (click)="loadTopListings()">
+													<i class="os-icon os-icon-refresh-ccw"></i> Refresh
+												</button>
+											</div>
+										</div>
+
+									</div><!-- /element-box -->
+								</div><!-- /element-wrapper -->
 							</div>
 						</div>
 						<div class="row">
@@ -700,15 +841,10 @@ END - Top Bar
 										<table class="table table-clean">
 											<tbody>
 
-												<tr *ngFor="let participant of participants">
-
-													<td><div class="value">{{participant.legalEntityName}}</div>
-														<span class="sub-value">{{participant.registeredName}}</span></td>
-													<td class="profile-tile-box">
-                            <div style="width:45px">
-                            <img src="{{participant.logo}}" />
-                            </div>
-														<span class="sub-value">{{participant.status}}</span></td>
+												<tr>
+													<td colspan="2" class="text-muted text-center">
+														<small>Connect your wallet to see your portfolio</small>
+													</td>
 												</tr>
 
 											</tbody>
@@ -748,12 +884,10 @@ END - Top Bar
 									</thead>
 									<tbody>
 
-										<tr *ngFor="let apiImplementada of apisImplementadas">
-											<td><span>{{apiImplementada.apiName}}</span></td>
-											<td class="text-center">{{apiImplementada.dhExtraction[2] + '/' + apiImplementada.dhExtraction[1] +'/'+ apiImplementada.dhExtraction[0]}}</td>
-											<td class="text-right text-bright" alt="Total de participantes implementando esta API"><i
-												class="os-icon os-icon-repeat icon-separator" alt="Total de participantes implementando esta API"></i>{{apiImplementada.totalParticipantsUsing}}</td>
-											<!-- <td class="text-right text-danger">{{apiImplementada.totalParticipantsUsing}}</td> -->
+										<tr>
+											<td colspan="3" class="text-muted text-center">
+												<small>No data available</small>
+											</td>
 										</tr>
 
 									</tbody>
@@ -823,5 +957,178 @@ END - Top Bar
 				</div>
 			</div>
 		</div>
-		<div class="display-type"></div>
+		
+	<!-- ── Reown-style Wallet Modal ──────────────────────────────────────────────── -->
+
+	<!-- NOT CONNECTED: wallet picker modal -->
+	<div *ngIf="showWalletDropdown && !walletConnected" class="wm-overlay" (click)="closeDropdown()">
+		<div class="wm-modal" (click)="$event.stopPropagation()">
+
+			<!-- Header -->
+			<div class="wm-header">
+				<span class="wm-header-title">Connect a Wallet</span>
+				<button class="wm-close-btn" (click)="closeDropdown()">
+					<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+					</svg>
+				</button>
+			</div>
+
+			<!-- Wallet grid (2 functional + 6 visual) -->
+			<div class="wm-body">
+
+				<!-- WalletConnect — functional -->
+				<button class="wm-wallet-card" (click)="connectWalletConnect()" [disabled]="isConnecting">
+					<div class="wm-wallet-icon">
+						<img src="https://avatars.githubusercontent.com/u/37784886" alt="WalletConnect"
+							 width="56" height="56" onerror="this.parentElement.style.background='#3b99fc'">
+					</div>
+					<span class="wm-wallet-name">WalletConnect</span>
+				</button>
+
+				<!-- MetaMask — functional -->
+				<button class="wm-wallet-card" (click)="connectMetaMask()" [disabled]="isConnecting">
+					<div class="wm-wallet-icon">
+						<img src="https://avatars.githubusercontent.com/u/11744586" alt="MetaMask"
+							 width="56" height="56" onerror="this.parentElement.style.background='#f6851b'">
+					</div>
+					<span class="wm-wallet-name">MetaMask</span>
+				</button>
+
+				<!-- Trust — visual -->
+				<button class="wm-wallet-card wm-wallet-card--dim" disabled>
+					<div class="wm-wallet-icon">
+						<img src="https://avatars.githubusercontent.com/u/32179936" alt="Trust"
+							 width="56" height="56" onerror="this.parentElement.style.background='#3375BB'">
+					</div>
+					<span class="wm-wallet-name">Trust</span>
+				</button>
+
+				<!-- Coinbase — visual -->
+				<button class="wm-wallet-card wm-wallet-card--dim" disabled>
+					<div class="wm-wallet-icon">
+						<img src="https://avatars.githubusercontent.com/u/18060234" alt="Coinbase"
+							 width="56" height="56" onerror="this.parentElement.style.background='#1652f0'">
+					</div>
+					<span class="wm-wallet-name">Coinbase</span>
+				</button>
+
+				<!-- Rainbow — visual -->
+				<button class="wm-wallet-card wm-wallet-card--dim" disabled>
+					<div class="wm-wallet-icon">
+						<img src="https://avatars.githubusercontent.com/u/48327834" alt="Rainbow"
+							 width="56" height="56" onerror="this.parentElement.style.background='#001e59'">
+					</div>
+					<span class="wm-wallet-name">Rainbow</span>
+				</button>
+
+				<!-- Phantom — visual -->
+				<button class="wm-wallet-card wm-wallet-card--dim" disabled>
+					<div class="wm-wallet-icon">
+						<img src="https://avatars.githubusercontent.com/u/78782331" alt="Phantom"
+							 width="56" height="56" onerror="this.parentElement.style.background='#ab9ff2'">
+					</div>
+					<span class="wm-wallet-name">Phantom</span>
+				</button>
+
+				<!-- Ledger — visual -->
+				<button class="wm-wallet-card wm-wallet-card--dim" disabled>
+					<div class="wm-wallet-icon">
+						<img src="https://avatars.githubusercontent.com/u/9784193" alt="Ledger"
+							 width="56" height="56" onerror="this.parentElement.style.background='#000'">
+					</div>
+					<span class="wm-wallet-name">Ledger</span>
+				</button>
+
+				<!-- More — visual -->
+				<button class="wm-wallet-card wm-wallet-card--dim" disabled>
+					<div class="wm-wallet-icon wm-wallet-icon--more">
+						<svg width="22" height="6" viewBox="0 0 22 6" fill="none">
+							<circle cx="3" cy="3" r="3" fill="rgba(255,255,255,0.5)"/>
+							<circle cx="11" cy="3" r="3" fill="rgba(255,255,255,0.5)"/>
+							<circle cx="19" cy="3" r="3" fill="rgba(255,255,255,0.5)"/>
+						</svg>
+					</div>
+					<span class="wm-wallet-name">More</span>
+				</button>
+
+			</div><!-- /wm-body -->
+
+			<!-- All Wallets row -->
+			<button class="wm-all-wallets" (click)="connectWalletConnect()" [disabled]="isConnecting">
+				<div class="wm-all-wallets-icon">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+						<rect x="3" y="3" width="8" height="8" rx="1.5" fill="rgba(255,255,255,0.65)"/>
+						<rect x="13" y="3" width="8" height="8" rx="1.5" fill="rgba(255,255,255,0.65)"/>
+						<rect x="3" y="13" width="8" height="8" rx="1.5" fill="rgba(255,255,255,0.65)"/>
+						<rect x="13" y="13" width="8" height="8" rx="1.5" fill="rgba(255,255,255,0.65)"/>
+					</svg>
+				</div>
+				<span>All Wallets</span>
+				<span class="wm-wallet-count">400+</span>
+				<svg class="wm-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+					<path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</button>
+
+			<!-- Footer -->
+			<div class="wm-footer">
+				<a href="https://ethereum.org/en/wallets/" target="_blank" class="wm-what-is">
+					<svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+						<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+						<path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+					</svg>
+					What is a Wallet?
+				</a>
+				<span class="wm-powered">Powered by <strong>Reown</strong></span>
+			</div>
+
+			<!-- Connecting overlay -->
+			<div *ngIf="isConnecting" class="wm-connecting-overlay">
+				<div class="wm-spinner"></div>
+				<span class="wm-connecting-text">Connecting...</span>
+			</div>
+
+		</div><!-- /wm-modal -->
+	</div><!-- /wm-overlay NOT CONNECTED -->
+
+	<!-- CONNECTED: account info modal -->
+	<div *ngIf="showWalletDropdown && walletConnected" class="wm-overlay" (click)="closeDropdown()">
+		<div class="wm-modal" (click)="$event.stopPropagation()">
+
+			<div class="wm-header">
+				<span class="wm-header-title">Account</span>
+				<button class="wm-close-btn" (click)="closeDropdown()">
+					<svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+						<path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+					</svg>
+				</button>
+			</div>
+
+			<div class="wm-account-body">
+				<div class="wm-account-meta">
+					Connected via
+					<strong class="wm-account-provider">{{ walletProviderType === 'metamask' ? 'MetaMask' : 'WalletConnect' }}</strong>
+					<span *ngIf="getNetworkName()" class="wm-account-network"> · {{ getNetworkName() }}</span>
+				</div>
+
+				<div class="wm-account-address">{{ walletAddress }}</div>
+
+				<div *ngIf="portfolioBalanceUSD > 0" class="wm-account-balance">
+					Portfolio: {{ formatUSD(portfolioBalanceUSD) }}
+				</div>
+
+				<button class="wm-disconnect-btn" (click)="disconnectWallet()">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+						<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"
+							 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+					Disconnect
+				</button>
+			</div>
+
+		</div><!-- /wm-modal -->
+	</div><!-- /wm-overlay CONNECTED -->
+
+	<div class="display-type"></div>
 	</div>

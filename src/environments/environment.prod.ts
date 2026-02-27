@@ -1,3 +1,5 @@
 export const environment = {
-  production: true
+  production: true,
+  coinMarketCapApiKey: '',
+  reownProjectId: 'YOUR_REOWN_PROJECT_ID'
 };

@@ -1,150 +1,207 @@
-import { CalledApis } from './calledapis.model';
-import { HttpCodes } from './http.model';
-import { Totals } from './totals.model';
-import { Component, OnInit } from '@angular/core';
-import { ExchangeService } from './exchange.service';
-import { User } from './user.model';
-import { Participants } from './participants.model';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-import { HttpDetail } from './httpdetail.model';
-import { ApiImplementada } from './apiimplementada.model';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Subject, of, combineLatest } from 'rxjs';
+import { takeUntil, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
+import { WalletService, WalletToken } from './wallet.service';
+import { CoinMarketCapService } from './coinmarketcap.service';
+import { CryptoCurrency } from './crypto-price.model';
 
 @Component({
   selector: 'app-crypto',
   templateUrl: './crypto.component.html',
   styleUrls: ['./crypto.component.css']
 })
-export class CryptoComponent implements OnInit {
+export class CryptoComponent implements OnInit, OnDestroy {
 
-  user!: User;
-  totals!: Totals;
-  participants!: Array<Participants>;
-  httpCodes!: Array<HttpCodes>;
-  balance:number;
-  nome!: string;
-  calledApis!:CalledApis;
-  apisImplementadas!:Array<ApiImplementada>;
+  // ── Wallet state ────────────────────────────────────────────────────────────
+  walletAddress: string | null = null;
+  walletConnected = false;
+  walletChainId: number | null = null;
+  walletTokens: WalletToken[] = [];
+  walletLoading = false;
+  walletProviderType: 'metamask' | 'walletconnect' | null = null;
+  walletError: string | null = null;
+  isConnecting = false;
+  showWalletDropdown = false;
 
-  constructor(private service: ExchangeService) {
-    this.balance = 0;
-   }
+  /** Total portfolio USD value computed from wallet tokens × CMC prices */
+  portfolioBalanceUSD = 0;
 
-  ngOnInit() {
-    console.log('Initializing CryptoServices...');
-    //this.service.checkCredentials();
+  // ── CoinMarketCap state ─────────────────────────────────────────────────────
+  searchQuery = '';
+  searchResults: CryptoCurrency[] = [];
+  topListings: CryptoCurrency[] = [];
+  isLoadingSearch = false;
+  isLoadingListings = false;
+  searchError: string | null = null;
+  listingsError: string | null = null;
 
-    this.user = new User();
-    this.user.name = "Alex";
+  /** CMC price map symbol → USD price (built from topListings) */
+  private priceMap: Record<string, number> = {};
 
-    this.totals = {
-          id: '1',
-          dhExtraction: new Date('2023-01-01'),
-          totalAuthorisationServers: 1,
-          totalParticipantsActive: 2,
-          totalParticipantsRegistered: 3,
-          totalParticipantsInactive: 4,
-       }
+  private searchSubject$ = new Subject<string>();
+  private destroy$ = new Subject<void>();
 
-    // this.service.getTotals().subscribe(data => this.totals = {
-    //     id: (data as any)[0].id,
-    //     dhExtraction: new Date((data as any)[0].dhExtraction[0], (data as any)[0].dhExtraction[1] -1, (data as any)[0].dhExtraction[2] ),
-    //     totalAuthorisationServers: (data as any)[0].totalAuthorisationServers,
-    //     totalParticipantsActive: (data as any)[0].totalParticipantsActive,
-    //     totalParticipantsRegistered: (data as any)[0].totalParticipantsRegistered,
-    //     totalParticipantsInactive: (data as any)[0].totalParticipantsRegistered - (data as any)[0].totalParticipantsActive
-    //  });
+  constructor(
+    public walletService: WalletService,
+    private cmcService: CoinMarketCapService
+  ) {}
 
-     // this.service.getParticipants().subscribe( (data: Array<Participants>) => this.participants = data);
+  ngOnInit(): void {
+    // Subscribe to wallet state
+    this.walletService.address$.pipe(takeUntil(this.destroy$)).subscribe(a => this.walletAddress = a);
+    this.walletService.connected$.pipe(takeUntil(this.destroy$)).subscribe(c => this.walletConnected = c);
+    this.walletService.chainId$.pipe(takeUntil(this.destroy$)).subscribe(id => this.walletChainId = id);
+    this.walletService.loading$.pipe(takeUntil(this.destroy$)).subscribe(l => this.walletLoading = l);
+    this.walletService.providerType$.pipe(takeUntil(this.destroy$)).subscribe(t => this.walletProviderType = t);
 
-     // this.service.getApisImplementadas().subscribe( (data: Array<ApiImplementada>) => this.apisImplementadas = data );
-
-     //this.calcularTotalApisChamadas();
-
-
-    // this.service.getUserDetails().subscribe(data => {
-    //   console.log("User obtained..." + data);
-    //   this.user = data;
-    // },
-    // (err) => {console.log("Ocorreu o seguite erro: " + err)});
-
-    // this.service.getUsers().subscribe(data => {
-    //   console.log(data);
-    //   this.users = data;
-    //   this.nome = data.name;
-    //   console.log(this.users);
-
-    //   // for (const device of this.devices) {
-    //   //   //this.giphyService.get(car.name).subscribe(url => car.giphyUrl = url);
-    //   //   console.log(device);
-    //   // }
-
-    // },
-    // (err) => {console.log("Ocorreu o seguinte erro: "+err)});
-
-    // this.service.getBalance().subscribe(data => {
-    //   console.log("Data Obtained on GETBALANCE ==> " + data);
-    //   this.balance = data.balance.toFixed(2);
-    // },
-    // (err) => {console.log("Ocorreu o seguinte erro: "+err)});
-
-
-  }
-
-  calcularTotalApisChamadas(){
-    this.calledApis = new CalledApis([], 0);
-    this.calledApis.total = 0;
-    let total = 0;
-    this.service.getHttpCodes().subscribe( (data:Array<HttpCodes>) => {
-    this.httpCodes = data;
-
-    let i = 0;
-    this.calledApis.details = [];
-
-      for(var httpcode of this.httpCodes){
-        total+= httpcode.total;
-        console.log(" value of i " + i);
-        if(i > 2){
-          this.calledApis.details[3] = new HttpDetail("",0,0,"");
-          this.calledApis.details[3].code = 'Outros';
-          this.calledApis.details[3].total = (this.calledApis.details[3].total || 0) + (httpcode.total || 0);
-          console.log('value of code ' + this.calledApis.details[3].code);
-        }else{
-          this.calledApis.details[i] = new HttpDetail("",0,0,"");
-          this.calledApis.details[i].code  = httpcode.httpStatusCode;
-          this.calledApis.details[i].total = httpcode.total;
-          console.log('value of code ' + this.calledApis.details[i].code);
-        }
-
-        i++;
-      }
-
-      for(var detail of this.calledApis.details){
-        console.log("############################################### " + detail.code);
-        detail.percentilFormatted = ((detail.total / total) *  100).toFixed(2);
-        console.log(" total " + total);
-        console.log(" d total " + detail.total);
-        console.log(" d percentil " + detail.percentil);
-      }
-
-
-
-      this.calledApis.total = total;
-
+    // Recompute portfolio whenever tokens or prices change
+    combineLatest([
+      this.walletService.tokens$,
+      this.walletService.loading$,
+    ]).pipe(takeUntil(this.destroy$)).subscribe(([tokens]) => {
+      this.walletTokens = tokens;
+      this.computePortfolio();
     });
 
+    // Debounced CMC symbol search
+    this.searchSubject$.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap(query => {
+        if (!query.trim()) { this.searchResults = []; this.isLoadingSearch = false; return of(null); }
+        this.isLoadingSearch = true;
+        this.searchError = null;
+        return this.cmcService.searchBySymbol(query).pipe(
+          catchError(() => { this.searchError = 'Failed to fetch. Check your API key.'; this.isLoadingSearch = false; return of(null); })
+        );
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe(results => { this.isLoadingSearch = false; if (results) this.searchResults = results; });
 
-
-
-
-
-
-
-
+    this.loadTopListings();
   }
 
-  processError(a:string){
-    console.log(a);
+  loadTopListings(): void {
+    this.isLoadingListings = true;
+    this.listingsError = null;
+    this.cmcService.getListings(20).pipe(
+      takeUntil(this.destroy$),
+      catchError(() => { this.listingsError = 'Failed to load listings.'; this.isLoadingListings = false; return of([]); })
+    ).subscribe(data => {
+      this.isLoadingListings = false;
+      this.topListings = data;
+      // Build price map for portfolio calculation
+      this.priceMap = {};
+      for (const coin of data) {
+        this.priceMap[coin.symbol.toUpperCase()] = coin.quote.USD.price;
+      }
+      this.computePortfolio();
+    });
   }
 
+  private computePortfolio(): void {
+    if (!this.walletTokens.length) { this.portfolioBalanceUSD = 0; return; }
+    let total = 0;
+    for (const t of this.walletTokens) {
+      const price = this.priceMap[t.symbol.toUpperCase()] ?? 0;
+      total += t.balance * price;
+    }
+    this.portfolioBalanceUSD = total;
+  }
 
+  // ── Wallet UI ───────────────────────────────────────────────────────────────
+
+  toggleWalletDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showWalletDropdown = !this.showWalletDropdown;
+    this.walletError = null;
+  }
+
+  @HostListener('document:click')
+  closeDropdown(): void {
+    this.showWalletDropdown = false;
+  }
+
+  async connectMetaMask(): Promise<void> {
+    this.showWalletDropdown = false;
+    this.isConnecting = true;
+    this.walletError = null;
+    try {
+      await this.walletService.connectMetaMask();
+    } catch (err: any) {
+      this.walletError = err?.message || 'MetaMask connection failed';
+    } finally {
+      this.isConnecting = false;
+    }
+  }
+
+  async connectWalletConnect(): Promise<void> {
+    this.showWalletDropdown = false;
+    this.isConnecting = true;
+    this.walletError = null;
+    try {
+      await this.walletService.connectWalletConnect();
+    } catch (err: any) {
+      this.walletError = err?.message || 'WalletConnect connection failed';
+    } finally {
+      this.isConnecting = false;
+    }
+  }
+
+  disconnectWallet(): void {
+    this.walletService.disconnect();
+    this.walletError = null;
+    this.showWalletDropdown = false;
+  }
+
+  getShortAddress(): string {
+    return this.walletService.getShortAddress(this.walletAddress);
+  }
+
+  getNetworkName(): string {
+    return this.walletService.getNetworkName(this.walletChainId);
+  }
+
+  getTokenUSDValue(token: WalletToken): number {
+    const price = this.priceMap[token.symbol.toUpperCase()] ?? 0;
+    return token.balance * price;
+  }
+
+  // ── Crypto search helpers ────────────────────────────────────────────────────
+
+  onSearch(query: string): void {
+    this.searchQuery = query;
+    this.searchSubject$.next(query);
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.searchResults = [];
+    this.searchError = null;
+  }
+
+  formatPrice(price: number): string {
+    if (price >= 1) return price.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return price.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 4, maximumFractionDigits: 6 });
+  }
+
+  formatUSD(value: number): string {
+    if (value >= 1e6) return `$${(value / 1e6).toFixed(2)}M`;
+    if (value >= 1e3) return `$${(value / 1e3).toFixed(2)}K`;
+    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  formatMarketCap(value: number): string {
+    if (value >= 1e12) return `$${(value / 1e12).toFixed(2)}T`;
+    if (value >= 1e9)  return `$${(value / 1e9).toFixed(2)}B`;
+    if (value >= 1e6)  return `$${(value / 1e6).toFixed(2)}M`;
+    return `$${value.toLocaleString()}`;
+  }
+
+  isPriceUp(change: number): boolean { return change >= 0; }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

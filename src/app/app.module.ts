@@ -1,8 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { DevicesService } from './devices/devices.service';
 import { ExchangeService } from './crypto/exchange.service';
 import { OrdersService } from './orders/orders.service';
+import { CoinMarketCapService } from './crypto/coinmarketcap.service';
+import { WalletService } from './crypto/wallet.service';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AppComponent } from './app.component';
@@ -64,7 +66,8 @@ const appRoutes: Routes = [
     FormsModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [DevicesService, TradeService, OrdersService, ExchangeService],
+  providers: [DevicesService, TradeService, OrdersService, ExchangeService, CoinMarketCapService, WalletService],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

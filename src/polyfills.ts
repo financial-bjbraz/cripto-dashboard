@@ -63,3 +63,8 @@ import 'zone.js';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+// Buffer polyfill required by @reown/appkit and viem
+import { Buffer } from 'buffer';
+(window as any).global = window;
+(window as any).Buffer = Buffer;

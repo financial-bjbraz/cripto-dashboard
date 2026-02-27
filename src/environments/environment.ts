@@ -3,7 +3,12 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  // Get your CoinMarketCap API key at https://coinmarketcap.com/api/
+  // Leave empty to use the sandbox demo key (fake data)
+  coinMarketCapApiKey: '',
+  // Get your Reown Project ID at https://cloud.reown.com
+  reownProjectId: 'YOUR_REOWN_PROJECT_ID'
 };
 
 /*
