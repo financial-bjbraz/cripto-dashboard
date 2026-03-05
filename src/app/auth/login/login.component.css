@@ -1,0 +1,178 @@
+/* ── Wrapper ──────────────────────────────────────────────── */
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0f1117;
+  padding: 24px;
+}
+
+/* ── Card ─────────────────────────────────────────────────── */
+.auth-box {
+  width: 100%;
+  max-width: 420px;
+  background: #1a1d27;
+  border: 1px solid #2a2d3a;
+  border-radius: 12px;
+  padding: 40px 36px;
+}
+
+/* ── Logo ─────────────────────────────────────────────────── */
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.auth-logo-mark {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  background: #10B981;
+  border-radius: 8px;
+}
+
+.auth-logo-label {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: 0.3px;
+}
+
+/* ── Headings ─────────────────────────────────────────────── */
+.auth-title {
+  color: #f1f5f9;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.auth-subtitle {
+  color: #64748b;
+  font-size: 13px;
+  margin: 0 0 28px;
+}
+
+/* ── Form fields ──────────────────────────────────────────── */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 6px;
+}
+
+.form-control {
+  width: 100%;
+  background: #0f1117;
+  border: 1px solid #2a2d3a;
+  border-radius: 8px;
+  color: #f1f5f9;
+  padding: 10px 14px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.form-control::placeholder {
+  color: #3d4455;
+}
+
+.form-group.has-error .form-control {
+  border-color: #ef4444;
+}
+
+/* ── Inline error messages ────────────────────────────────── */
+.auth-error-msg {
+  font-size: 12px;
+  color: #ef4444;
+  margin-top: 5px;
+}
+
+/* ── Server-level error ───────────────────────────────────── */
+.auth-server-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #ef4444;
+  font-size: 13px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+
+/* ── Submit button ────────────────────────────────────────── */
+.auth-submit {
+  width: 100%;
+  background: #10B981;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+  margin-top: 4px;
+}
+
+.auth-submit:hover:not(:disabled) {
+  background: #059669;
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Loading dots ─────────────────────────────────────────── */
+.auth-spinner {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.auth-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: #fff;
+  border-radius: 50%;
+  animation: auth-bounce 1.2s infinite ease-in-out;
+}
+
+.auth-dot:nth-child(2) { animation-delay: 0.2s; }
+.auth-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes auth-bounce {
+  0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+  40%           { transform: scale(1.0); opacity: 1; }
+}
+
+/* ── Footer ───────────────────────────────────────────────── */
+.auth-footer {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.auth-footer a {
+  color: #10B981;
+  margin-left: 5px;
+  text-decoration: none;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}

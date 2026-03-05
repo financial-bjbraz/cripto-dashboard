@@ -1,73 +1,68 @@
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SecurityInterceptor } from './core/interceptors/security.interceptor';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { FormsModule } from '@angular/forms';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+
+import { environment } from '../environments/environment';
+import { AppRoutingModule } from './app-routing.module';
+import { SharedModule } from './shared/shared.module';
+import { userReducer } from './store/user/user.reducer';
+import { balanceReducer } from './store/balance/balance.reducer';
+import { BalanceEffects } from './store/balance/balance.effects';
+
+import { AppComponent } from './app.component';
+import { LayoutComponent } from './layout/layout.component';
+import { AuthService } from './auth/auth.service';
+
 import { DevicesService } from './devices/devices.service';
 import { ExchangeService } from './crypto/exchange.service';
 import { OrdersService } from './orders/orders.service';
 import { CoinMarketCapService } from './crypto/coinmarketcap.service';
 import { WalletService } from './crypto/wallet.service';
-import { RouterModule, Routes } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { AppComponent } from './app.component';
-import { DevicesComponent } from './devices/devices.component';
-import { HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
-import { OrdersComponent } from './orders/orders.component';
-import { VisitorsComponent } from './visitors/visitors.component';
-import { RecentordersComponent } from './recentorders/recentorders.component';
-import { QuicklinksComponent } from './quicklinks/quicklinks.component';
-import { SupportComponent } from './support/support.component';
-import { RecentactivityComponent } from './recentactivity/recentactivity.component';
-import { TeammembersComponent } from './teammembers/teammembers.component';
-import { MenuComponent } from './menu/menu.component';
-import { TopbarComponent } from './topbar/topbar.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { BalanceComponent } from './balance/balance.component';
-import { CryptoComponent } from './crypto/crypto.component';
-import { TradeComponent } from './trade/trade.component';
 import { TradeService } from './trade/trade.service';
 
-const appRoutes: Routes = [
-  { path: '',
-    redirectTo: '/dashboard',
-    pathMatch: 'full'
-  },
-  {
-    path: 'dashboard',
-    component: DashboardComponent
-  },
-  {
-    path: 'crypto',
-    component: CryptoComponent
-  }
-];
 @NgModule({
   declarations: [
     AppComponent,
-    DevicesComponent,
-    OrdersComponent,
-    VisitorsComponent,
-    RecentordersComponent,
-    QuicklinksComponent,
-    SupportComponent,
-    RecentactivityComponent,
-    TeammembersComponent,
-    MenuComponent,
-    TopbarComponent,
-    DashboardComponent,
-    CryptoComponent,
-    TradeComponent,
-    BalanceComponent,
+    LayoutComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     BrowserAnimationsModule,
     FormsModule,
-    RouterModule.forRoot(appRoutes)
+    SharedModule,
+    AppRoutingModule,
+    StoreModule.forRoot({ user: userReducer, balance: balanceReducer }),
+    EffectsModule.forRoot([BalanceEffects]),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
-  providers: [DevicesService, TradeService, OrdersService, ExchangeService, CoinMarketCapService, WalletService],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (auth: AuthService) => () => auth.initializeApp(),
+      deps: [AuthService],
+      multi: true,
+    },
+    { provide: HTTP_INTERCEPTORS, useClass: SecurityInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    DevicesService,
+    TradeService,
+    OrdersService,
+    ExchangeService,
+    CoinMarketCapService,
+    WalletService,
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

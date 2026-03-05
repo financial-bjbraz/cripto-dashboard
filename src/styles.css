@@ -2,3 +2,55 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* ── Global background override ───────────────────────────────────────────── */
+body,
+.all-wrapper,
+.all-wrapper.solid-bg-all,
+.layout-w,
+.content-w,
+.content-i,
+.content-box {
+  background-color: rgb(40, 50, 69) !important;
+}
+
+/* ── Remove left-panel gap (no side menu) ─────────────────────────────────── */
+.layout-w {
+  display: block !important;
+}
+.content-w {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* ── Top bar ──────────────────────────────────────────────────────────────── */
+.top-bar {
+  background-color: rgb(30, 38, 54) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 24px !important;
+  height: 60px !important;
+}
+
+.top-bar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.top-bar-brand-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #10B981;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.top-menu-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

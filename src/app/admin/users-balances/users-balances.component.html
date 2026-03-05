@@ -1,0 +1,51 @@
+<div class="ub-container">
+  <div class="ub-header">
+    <h3>Saldos dos Usuários</h3>
+    <button class="btn-refresh" (click)="load()">Atualizar</button>
+  </div>
+
+  <!-- Grand Total -->
+  <div class="grand-total" *ngIf="grandTotal$ | async as gt">
+    <span>Total Fiat: <strong>R$ {{ gt.fiatTotal | number:'1.2-2' }}</strong></span>
+    <span>Total BRLN: <strong>{{ gt.brlnTotal | number:'1.2-2' }} BRLN</strong></span>
+  </div>
+
+  <!-- Error -->
+  <div class="error-banner" *ngIf="error$ | async as err">
+    {{ err }}
+    <button (click)="load()">Tentar novamente</button>
+  </div>
+
+  <!-- Table -->
+  <table class="ub-table">
+    <thead>
+      <tr>
+        <th>Usuário</th>
+        <th>Saldo Fiat</th>
+        <th>Saldo BRLN</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Loading skeleton -->
+      <ng-container *ngIf="loading$ | async">
+        <tr class="skeleton-row" *ngFor="let r of skeletonRows">
+          <td><span class="skeleton"></span></td>
+          <td><span class="skeleton"></span></td>
+          <td><span class="skeleton"></span></td>
+        </tr>
+      </ng-container>
+
+      <!-- Data -->
+      <ng-container *ngIf="!(loading$ | async)">
+        <tr *ngFor="let u of users$ | async">
+          <td>{{ u.email }}</td>
+          <td>R$ {{ u.fiatBalance | number:'1.2-2' }}</td>
+          <td>{{ u.brlnBalance | number:'1.2-2' }} BRLN</td>
+        </tr>
+        <tr *ngIf="(users$ | async)?.length === 0">
+          <td colspan="3" class="empty">Nenhum usuário encontrado.</td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+</div>

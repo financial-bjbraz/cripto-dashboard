@@ -1,0 +1,62 @@
+<div class="st-container">
+  <h3>Transferência de Stablecoin</h3>
+
+  <div class="error-banner" *ngIf="error$ | async as err">{{ err }}</div>
+
+  <ng-container *ngIf="!successResult; else successState">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <!-- From -->
+      <div class="field">
+        <label>De (From)</label>
+        <select formControlName="fromUserId">
+          <option value="">Selecione o usuário de origem</option>
+          <option *ngFor="let u of adminUsers$ | async" [value]="u.id">
+            {{ u.email }} {{ u.walletAddress ? '🔗' : '' }}
+          </option>
+        </select>
+      </div>
+
+      <!-- To -->
+      <div class="field">
+        <label>Para (To)</label>
+        <select formControlName="toUserId">
+          <option value="">Selecione o usuário de destino</option>
+          <option *ngFor="let u of adminUsers$ | async" [value]="u.id">
+            {{ u.email }} {{ u.walletAddress ? '🔗 ' + u.walletAddress.slice(0,8) + '…' : '' }}
+          </option>
+        </select>
+        <span class="field-error" *ngIf="form.errors?.['sameUser']">Origem e destino não podem ser iguais.</span>
+      </div>
+
+      <!-- Amount -->
+      <div class="field">
+        <label>Valor em BRL (R$)</label>
+        <input type="number" formControlName="amountFiat" min="0.01" step="0.01" placeholder="0,00">
+        <span class="field-error" *ngIf="form.get('amountFiat')?.errors?.['required'] && form.get('amountFiat')?.touched">Informe o valor.</span>
+        <span class="field-error" *ngIf="form.get('amountFiat')?.errors?.['min']">O valor deve ser maior que zero.</span>
+      </div>
+
+      <!-- Conversion display -->
+      <div class="conversion" *ngIf="amountFiat > 0">
+        <span>R$ {{ amountFiat | number:'1.2-2' }}</span>
+        <span class="arrow">↓ 1:1</span>
+        <span><strong>{{ amountFiat | number:'1.2-2' }} BRLN</strong></span>
+      </div>
+
+      <button type="submit" class="btn-submit" [disabled]="loading$ | async">
+        <span *ngIf="!(loading$ | async)">Transferir BRLN</span>
+        <span *ngIf="loading$ | async">Processando…</span>
+      </button>
+    </form>
+  </ng-container>
+
+  <ng-template #successState>
+    <div class="success-panel">
+      <p>✓ Transferência realizada com sucesso!</p>
+      <p>Valor: <strong>{{ successResult!.amountBrln | number:'1.2-2' }} BRLN</strong></p>
+      <p>ID: <code>{{ successResult!.txId }}</code></p>
+      <p>On-chain: {{ successResult!.onChain ? 'Sim' : 'Não (sem endereço de carteira)' }}</p>
+      <button (click)="reset()">Nova transferência</button>
+    </div>
+  </ng-template>
+</div>

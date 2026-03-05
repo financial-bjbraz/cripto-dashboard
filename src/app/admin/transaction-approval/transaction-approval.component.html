@@ -1,0 +1,54 @@
+<div class="ta-container">
+  <div class="ta-header">
+    <h3>Transações Pendentes <span class="count" *ngIf="(transactions$ | async)?.length">({{ (transactions$ | async)?.length }})</span></h3>
+    <button class="btn-refresh" (click)="load()">Atualizar</button>
+  </div>
+
+  <div class="error-banner" *ngIf="error$ | async as err">{{ err }}</div>
+
+  <!-- Confirmation dialog -->
+  <div class="confirm-overlay" *ngIf="confirmingTxId">
+    <div class="confirm-box">
+      <p>Confirmar <strong>{{ confirmingAction === 'approve' ? 'aprovação' : 'rejeição' }}</strong> da transação?</p>
+      <div class="confirm-actions">
+        <button class="btn-cancel" (click)="cancelConfirm()">Cancelar</button>
+        <button class="btn-ok"
+          [class.btn-approve]="confirmingAction === 'approve'"
+          [class.btn-reject]="confirmingAction === 'reject'"
+          (click)="confirmingAction === 'approve' ? confirmApprove(confirmingTxId!) : confirmReject(confirmingTxId!)">
+          {{ confirmingAction === 'approve' ? 'Aprovar' : 'Rejeitar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading$ | async" class="loading-bar"></div>
+
+  <table class="ta-table" *ngIf="(transactions$ | async)?.length; else emptyState">
+    <thead>
+      <tr>
+        <th>ID</th><th>Usuário</th><th>Tipo</th><th>Valor</th><th>Data</th><th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tx of transactions$ | async" [class.processing]="processingTxId === tx.txId">
+        <td class="mono">{{ tx.txId }}</td>
+        <td>{{ tx.userEmail }}</td>
+        <td>{{ typeLabel(tx.type) }}</td>
+        <td>R$ {{ tx.amount | number:'1.2-2' }}</td>
+        <td>{{ tx.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td class="actions">
+          <ng-container *ngIf="processingTxId !== tx.txId; else spinner">
+            <button class="btn-approve" (click)="requestConfirm(tx.txId, 'approve')">✓ Aprovar</button>
+            <button class="btn-reject"  (click)="requestConfirm(tx.txId, 'reject')">✗ Rejeitar</button>
+          </ng-container>
+          <ng-template #spinner><span class="spinner"></span></ng-template>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #emptyState>
+    <div class="empty-state" *ngIf="!(loading$ | async)">Nenhuma transação pendente.</div>
+  </ng-template>
+</div>

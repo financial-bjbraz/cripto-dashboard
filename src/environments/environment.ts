@@ -4,11 +4,20 @@
 
 export const environment = {
   production: false,
+  bffUrl: 'http://localhost:3000',
   // Get your CoinMarketCap API key at https://coinmarketcap.com/api/
   // Leave empty to use the sandbox demo key (fake data)
   coinMarketCapApiKey: '',
   // Get your Reown Project ID at https://cloud.reown.com
-  reownProjectId: 'YOUR_REOWN_PROJECT_ID'
+  reownProjectId: 'YOUR_REOWN_PROJECT_ID',
+  // Cognito Hosted UI — OAuth2 Authorization Code + PKCE
+  oidcConfig: {
+    authority: 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_1jVdBHfqN',
+    client_id: '7kpe7t9iqpect9e3ljirjp2c39',
+    redirect_uri: 'http://localhost:4200',
+    response_type: 'code',
+    scope: 'email openid phone',
+  },
 };
 
 /*

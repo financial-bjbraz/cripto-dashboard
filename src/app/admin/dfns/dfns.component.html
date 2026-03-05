@@ -1,0 +1,17 @@
+<div class="dfns-container">
+  <h2>DFNS — Carteira &amp; Contrato</h2>
+
+  <app-dfns-wallet-info></app-dfns-wallet-info>
+
+  <div class="dfns-tabs">
+    <button [class.active]="activeTab === 'deploy'"   (click)="activeTab = 'deploy'">Implantar Contrato</button>
+    <button [class.active]="activeTab === 'mintburn'" (click)="activeTab = 'mintburn'">Mint / Burn</button>
+    <button [class.active]="activeTab === 'transfer'" (click)="activeTab = 'transfer'">Transferência On-Chain</button>
+  </div>
+
+  <div class="dfns-tab-content">
+    <app-dfns-deploy    *ngIf="activeTab === 'deploy'"></app-dfns-deploy>
+    <app-dfns-mint-burn *ngIf="activeTab === 'mintburn'"></app-dfns-mint-burn>
+    <app-dfns-transfer  *ngIf="activeTab === 'transfer'"></app-dfns-transfer>
+  </div>
+</div>

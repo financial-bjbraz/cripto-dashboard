@@ -1,0 +1,39 @@
+<div class="wallet-info-card">
+  <div class="wi-header">
+    <span class="wi-title">Carteira DFNS</span>
+    <button class="btn-refresh" (click)="refresh()" [disabled]="loading$ | async">Atualizar</button>
+  </div>
+
+  <div *ngIf="loading$ | async" class="wi-loading">Carregando carteira…</div>
+  <div *ngIf="error$ | async as err" class="wi-error">{{ err }}</div>
+
+  <ng-container *ngIf="wallet$ | async as w">
+    <div class="wi-grid">
+      <span class="wi-label">ID</span>
+      <span class="wi-value mono">{{ truncate(w.id) }}</span>
+
+      <span class="wi-label">Rede</span>
+      <span class="wi-value">{{ w.network }}</span>
+
+      <span class="wi-label">Endereço</span>
+      <span class="wi-value mono">
+        {{ truncate(w.address) }}
+        <button class="btn-copy" (click)="copy(w.address)" title="Copiar">📋</button>
+      </span>
+
+      <span class="wi-label">Status</span>
+      <span class="wi-value">
+        <span class="badge" [class.badge-active]="w.status === 'Active'" [class.badge-inactive]="w.status !== 'Active'">
+          {{ w.status }}
+        </span>
+      </span>
+    </div>
+
+    <div class="wi-assets" *ngIf="w.assets?.length">
+      <div class="asset-row" *ngFor="let a of w.assets">
+        <span>{{ a.symbol }}</span>
+        <span>{{ a.balance }}</span>
+      </div>
+    </div>
+  </ng-container>
+</div>

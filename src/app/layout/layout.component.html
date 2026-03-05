@@ -1,0 +1,14 @@
+<div class="all-wrapper solid-bg-all">
+  <div class="layout-w">
+    <div class="content-w">
+      <app-topbar></app-topbar>
+      <nav *ngIf="user?.role === 'admin'" class="admin-nav-bar">
+        <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Admin</a>
+        <a routerLink="/admin/balances" routerLinkActive="active">Saldos</a>
+        <a routerLink="/admin/approvals" routerLinkActive="active">Aprovações</a>
+        <a routerLink="/admin/transfer" routerLinkActive="active">Transferência</a>
+      </nav>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

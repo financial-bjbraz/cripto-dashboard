@@ -1,28 +1,22 @@
-# Stage 1
-FROM node:14.18-alpine as build-step
-RUN mkdir -p /app
+# ── Stage 1: Build ────────────────────────────────────────────────────────────
+FROM node:16-alpine AS builder
+
 WORKDIR /app
-COPY package.json /app
-RUN npm install
-COPY . /app
-RUN npm run build --prod
 
-# Stage 2
-FROM nginx:1.21.3-alpine
-COPY --from=build-step /app/docs /usr/share/nginx/html
+COPY package*.json ./
+RUN npm ci --legacy-peer-deps
 
+COPY . .
+RUN npm run build -- --configuration development
 
-# docker build -t bjbraz/angular-app .
-# docker run -d -it -p 80:80/tcp --name angular-app bjbraz/angular-app:latest
-# ### STAGE 1: Build ###
-# FROM node:14-alpine AS build
-# WORKDIR /
-# COPY package.json package-lock.json ./
-# RUN npm install
-# COPY . .
-# RUN npm run build
+# ── Stage 2: Serve ────────────────────────────────────────────────────────────
+FROM nginx:alpine
 
-# ### STAGE 2: Run ###
-# FROM nginx:1.17.1-alpine
-# COPY nginx.conf /etc/nginx/nginx.conf
-# COPY --from=build /dist /usr/share/nginx/html
+COPY --from=builder /app/dist/ofb-dashboard /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Remove default nginx config to avoid conflicts
+RUN rm /etc/nginx/conf.d/default.conf.bak 2>/dev/null || true
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

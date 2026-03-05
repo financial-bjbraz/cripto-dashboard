@@ -1,0 +1,52 @@
+<div class="mb-container">
+  <!-- Tabs -->
+  <div class="mb-tabs">
+    <button [class.active]="activeTab === 'mint'" (click)="activeTab = 'mint'">Mint</button>
+    <button [class.active]="activeTab === 'burn'" (click)="activeTab = 'burn'">Burn</button>
+  </div>
+
+  <div class="error-banner" *ngIf="error$ | async as err">{{ err }} <button (click)="clearResult()">×</button></div>
+
+  <div class="tx-result" *ngIf="txId$ | async as txId">
+    <p>✓ txId: <code>{{ txId }}</code></p>
+    <p>Status: {{ txStatus$ | async }}</p>
+    <button (click)="clearResult()">Limpar</button>
+  </div>
+
+  <!-- Mint form -->
+  <form [formGroup]="mintForm" (ngSubmit)="onMint()" *ngIf="activeTab === 'mint' && !(txId$ | async)">
+    <div class="field">
+      <label>Endereço destino</label>
+      <input type="text" formControlName="toAddress" placeholder="0x…">
+    </div>
+    <div class="field">
+      <label>Quantidade BRLN</label>
+      <input type="number" formControlName="amount" min="0.01" step="0.01">
+    </div>
+    <button type="submit" class="btn-mint" [disabled]="loading$ | async">
+      {{ (loading$ | async) ? 'Processando…' : 'Mintar' }}
+    </button>
+  </form>
+
+  <!-- Burn form -->
+  <form [formGroup]="burnForm" (ngSubmit)="onBurn()" *ngIf="activeTab === 'burn' && !(txId$ | async)">
+    <div class="field">
+      <label>Endereço fonte</label>
+      <input type="text" formControlName="toAddress" placeholder="0x…">
+    </div>
+    <div class="field">
+      <label>Quantidade BRLN</label>
+      <input type="number" formControlName="amount" min="0.01" step="0.01">
+    </div>
+    <button type="submit" class="btn-burn" [disabled]="loading$ | async">
+      {{ (loading$ | async) ? 'Processando…' : 'Queimar' }}
+    </button>
+  </form>
+
+  <!-- Pause / Unpause -->
+  <div class="pause-row">
+    <span class="contract-status">Status do contrato: <strong>Ativo</strong></span>
+    <button class="btn-pause"   (click)="onPause()"   [disabled]="loading$ | async">Pausar Contrato</button>
+    <button class="btn-unpause" (click)="onUnpause()" [disabled]="loading$ | async">Reativar Contrato</button>
+  </div>
+</div>

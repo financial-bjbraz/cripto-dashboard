@@ -1,0 +1,32 @@
+<div class="auth-wrapper">
+  <div class="auth-box">
+
+    <div class="auth-logo">
+      <span class="auth-logo-mark"></span>
+      <span class="auth-logo-label">BRLN Dashboard</span>
+    </div>
+
+    <h4 class="auth-title">Entrar na sua conta</h4>
+    <p class="auth-subtitle">BRLN — Stablecoin 1:1 com o Real</p>
+
+    <button
+      type="button"
+      class="btn btn-primary btn-block auth-submit"
+      (click)="onLogin()"
+      [disabled]="loading"
+    >
+      <span *ngIf="!loading">Entrar com Cognito</span>
+      <span *ngIf="loading" class="auth-spinner">
+        <span class="auth-dot"></span>
+        <span class="auth-dot"></span>
+        <span class="auth-dot"></span>
+      </span>
+    </button>
+
+    <div class="auth-footer">
+      <span>Não tem conta?</span>
+      <a href="#">Fale com o suporte</a>
+    </div>
+
+  </div>
+</div>

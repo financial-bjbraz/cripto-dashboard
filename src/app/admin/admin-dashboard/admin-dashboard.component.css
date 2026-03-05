@@ -1,0 +1,12 @@
+.admin-dashboard { padding: 24px; }
+h2 { margin-bottom: 24px; color: #1e293b; }
+.admin-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+.admin-card {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 24px 16px; background: #fff; border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.1); text-decoration: none; color: #334155;
+  transition: box-shadow .2s, transform .2s;
+}
+.admin-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.15); transform: translateY(-2px); }
+.card-icon { font-size: 32px; }
+.card-title { font-size: 14px; font-weight: 600; text-align: center; }

@@ -1,0 +1,48 @@
+.dfns-container { padding: 24px; }
+h2 { margin: 0 0 20px; color: #1e293b; }
+.dfns-tabs { display: flex; gap: 0; margin: 20px 0 0; border-bottom: 2px solid #e2e8f0; }
+.dfns-tabs button {
+  padding: 10px 20px; background: none; border: none; font-size: 14px; font-weight: 600;
+  color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px;
+}
+.dfns-tabs button.active { color: #10B981; border-bottom-color: #10B981; }
+.dfns-tab-content { padding: 20px 0; }
+
+/* Shared sub-component styles */
+:host ::ng-deep .wallet-info-card {
+  background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+  padding: 16px 20px; margin-bottom: 8px;
+}
+:host ::ng-deep .wi-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+:host ::ng-deep .wi-title { font-weight: 700; font-size: 15px; color: #1e293b; }
+:host ::ng-deep .wi-grid { display: grid; grid-template-columns: 120px 1fr; gap: 8px 16px; align-items: center; }
+:host ::ng-deep .wi-label { font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; }
+:host ::ng-deep .wi-value { font-size: 14px; color: #1e293b; }
+:host ::ng-deep .mono { font-family: monospace; letter-spacing: .03em; }
+:host ::ng-deep .badge { padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+:host ::ng-deep .badge-active { background: #dcfce7; color: #16a34a; }
+:host ::ng-deep .badge-inactive { background: #fee2e2; color: #dc2626; }
+:host ::ng-deep .btn-refresh { padding: 6px 12px; background: #10B981; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
+:host ::ng-deep .btn-copy { background: none; border: none; cursor: pointer; }
+:host ::ng-deep .wi-assets { margin-top: 12px; border-top: 1px solid #e2e8f0; padding-top: 10px; display: flex; gap: 24px; }
+:host ::ng-deep .asset-row { display: flex; flex-direction: column; font-size: 13px; }
+:host ::ng-deep .error-banner { background: #fee2e2; color: #b91c1c; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; display: flex; justify-content: space-between; }
+:host ::ng-deep .error-banner button { background: none; border: none; cursor: pointer; font-size: 18px; color: #b91c1c; }
+:host ::ng-deep .tx-result { background: #f0fdf4; border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; }
+:host ::ng-deep .tx-result code { font-family: monospace; background: #dcfce7; padding: 2px 6px; border-radius: 4px; }
+:host ::ng-deep .tx-result button { margin-top: 8px; padding: 6px 14px; background: #10B981; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+:host ::ng-deep .field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+:host ::ng-deep .field label { font-size: 13px; font-weight: 600; color: #475569; }
+:host ::ng-deep .field input { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; }
+:host ::ng-deep .mb-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; }
+:host ::ng-deep .mb-tabs button { padding: 8px 18px; background: none; border: none; font-size: 14px; font-weight: 600; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+:host ::ng-deep .mb-tabs button.active { color: #10B981; border-bottom-color: #10B981; }
+:host ::ng-deep .btn-mint { padding: 10px 20px; background: #10B981; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; margin-bottom: 16px; }
+:host ::ng-deep .btn-burn { padding: 10px 20px; background: #EF4444; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; margin-bottom: 16px; }
+:host ::ng-deep .btn-mint:disabled, :host ::ng-deep .btn-burn:disabled { opacity: .6; cursor: not-allowed; }
+:host ::ng-deep .pause-row { display: flex; gap: 12px; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 16px; flex-wrap: wrap; }
+:host ::ng-deep .contract-status { color: #475569; font-size: 14px; flex: 1; }
+:host ::ng-deep .btn-pause { padding: 8px 14px; background: #F59E0B; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+:host ::ng-deep .btn-unpause { padding: 8px 14px; background: #10B981; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+:host ::ng-deep .btn-transfer { width: 100%; padding: 12px; background: #10B981; color: #fff; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+:host ::ng-deep .btn-transfer:disabled { opacity: .6; cursor: not-allowed; }
