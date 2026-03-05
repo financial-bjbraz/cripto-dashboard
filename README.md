@@ -172,6 +172,45 @@ cripto-dashboard/
 
 ---
 
+## Docker
+
+The project ships with a two-stage `Dockerfile`:
+
+| Stage | Base image | Purpose |
+|-------|-----------|---------|
+| `builder` | `node:16-alpine` | Installs dependencies and runs `ng build --configuration development` |
+| (final) | `nginx:alpine` | Serves the compiled static assets on port **80** |
+
+Node 16 is required in the builder stage because Angular 12's webpack config uses a legacy OpenSSL provider that is incompatible with Node 18+.
+
+### Build the image
+
+```bash
+docker build -t ofb-dashboard .
+```
+
+### Run the container
+
+```bash
+docker run -p 4200:80 ofb-dashboard
+```
+
+The app will be available at `http://localhost:4200`.
+
+> **Important:** API keys (`coinMarketCapApiKey`, `reownProjectId`) are baked into the Angular bundle at build time from the `src/environments/` files. Update those files **before** building the image if you need different keys in the container.
+
+### What `.dockerignore` excludes
+
+| Excluded path | Reason |
+|--------------|--------|
+| `node_modules/` | Rebuilt inside the container by `npm ci` |
+| `dist/` | Rebuilt inside the container by `ng build` |
+| `.git/` | Not needed in the image |
+| `bff/` | The BFF is a separate service with its own Dockerfile |
+| `.env` | Secrets must not be baked into the image |
+
+---
+
 ## Build Notes
 
 - **TypeScript version:** 4.3.5 (fixed by Angular 12). This prevents use of newer libraries that require TypeScript 5+.
